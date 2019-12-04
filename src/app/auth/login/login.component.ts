@@ -1,20 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+// ngrx
+import { AppState } from 'src/app/app.reducer';
+import { Store } from '@ngrx/store';
+
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styles: []
+  templateUrl: './login.component.html'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+  public cargando: boolean;
+  public subscription: Subscription;
 
-  constructor(private _auth: AuthService) { }
+  constructor(private authService: AuthService,
+              private store: Store<AppState>) { }
 
   ngOnInit() {
+    this.subscription = this.store.select('ui').subscribe(ui => this.cargando = ui.isLoading);
+  }
+  ngOnDestroy() {
+      this.subscription.unsubscribe();
   }
 
   public onSubmit(data) {
-    this._auth.login(data.email, data.password);
+    this.authService.login(data.email, data.password);
   }
-
 }

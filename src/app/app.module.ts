@@ -1,5 +1,10 @@
 import { environment } from 'src/environments/environment';
 
+// ngrx
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { APP_REDUCERS } from './app.reducer';
+
 // Modulos
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -43,6 +48,11 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
     AngularFireModule,
     AngularFirestoreModule,
     AngularFireAuthModule,
+    StoreModule.forRoot(APP_REDUCERS),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
     AppRoutingModule
   ],
   providers: [],
