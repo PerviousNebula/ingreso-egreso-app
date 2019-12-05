@@ -15,17 +15,20 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>Descripción</td>
-                            <td>Monto</td>
-                            <td>Tipo</td>
-                            <td>acciones</td>
+                        <tr *ngFor="let item of items | ordenIngresoEgreso">
+                            <td>{{ item.descripcion }}</td>
+                            <td>{{ item.monto | currency }}</td>
+                            <td>
+                                <span class="badge" [ngClass]="item.tipo === 'ingreso' ? 'badge-primary' : 'badge-warning'">
+                                    {{ item.tipo | uppercase }}
+                                </span>
+                            </td>
+                            <td>
+                                <button (click)="borrarItem(item.uid)" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                            </td>
                         </tr>
                     </tbody>
-
                 </table>
-
-
             </div>
         </div>
     </div>

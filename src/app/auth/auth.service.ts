@@ -1,6 +1,7 @@
 // ngrx
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.reducer';
+import { SetUserAction, UnsetUserAction } from './auth.actions';
 import { ActivarLoadingAction, DesactivarLoadingAction } from '../shared/ui.actions';
 
 // Firebase
@@ -14,15 +15,15 @@ import { User } from './register/user.model';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import Swal from 'sweetalert2';
-import { SetUserAction } from './auth.actions';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private userSubscription: Subscription = new Subscription();
+  private usuario: User;
 
   constructor(private afAuth: AngularFireAuth,
               private router: Router,
@@ -38,8 +39,10 @@ export class AuthService {
             .subscribe((usuarioObj: any) => {
               const NEW_USER = new User(usuarioObj);
               this.store.dispatch(new SetUserAction(NEW_USER));
+              this.usuario = NEW_USER;
         });
       } else {
+        this.usuario = null;
         this.userSubscription.unsubscribe();
       }
     });
@@ -53,13 +56,14 @@ export class AuthService {
         this.store.dispatch(new DesactivarLoadingAction());
         this.router.navigate(['/']);
       });
-    }).catch(() => {
+    }).catch((err: any) => {
       this.store.dispatch(new DesactivarLoadingAction());
       Swal.fire({
-        title: 'Correo invalido',
-        text: 'El correo ya existe en la base de datos',
+        title: 'Correo o contraseña invalidos',
+        text: 'Error al crear la centa',
         icon: 'error'
       });
+      console.error(err);
     });
   }
 
@@ -81,6 +85,7 @@ export class AuthService {
   public logout() {
     this.router.navigate(['/login']);
     this.afAuth.auth.signOut();
+    this.store.dispatch(new UnsetUserAction());
   }
 
   public isAuth() {
@@ -90,5 +95,9 @@ export class AuthService {
       }
       return fbUser !== null;
     }));
+  }
+
+  public getUsuario() {
+    return { ...this.usuario };
   }
 }
