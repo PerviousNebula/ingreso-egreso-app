@@ -6,7 +6,7 @@ import { IngresoEgresoService } from './ingreso-egreso.service';
 
 // ngrx
 import { Store } from '@ngrx/store';
-import { AppState } from '../app.reducer';
+import * as fromIngresoEgreso from './ingreso-egreso.reducer';
 import { ActivarLoadingAction, DesactivarLoadingAction } from '../shared/ui.actions';
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -25,10 +25,11 @@ export class IngresoEgresoComponent implements OnInit, OnDestroy {
   private ingresoEgresoSubscription: Subscription = new Subscription();
 
   constructor(public ingresoEgresoService: IngresoEgresoService,
-              private store: Store<AppState>) { }
+              private store: Store<fromIngresoEgreso.AppState>) { }
 
   ngOnInit() {
-    this.ingresoEgresoSubscription = this.store.select('ui').subscribe(ui => this.cargando = ui.isLoading);
+    this.ingresoEgresoSubscription = this.store.select('ui')
+                                               .subscribe(ui => this.cargando = ui.isLoading);
     this.ingresoEgresoForm = new FormGroup({
       descripcion: new FormControl('', Validators.required),
       monto: new FormControl(0, Validators.min(0))

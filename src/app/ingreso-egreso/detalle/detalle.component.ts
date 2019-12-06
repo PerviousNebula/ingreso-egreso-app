@@ -1,6 +1,6 @@
 // ngrx
 import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/app.reducer';
+import * as fromIngresoEgreso from '../ingreso-egreso.reducer';
 
 // Models
 import { IngresoEgreso } from '../ingreso-egreso.model';
@@ -21,11 +21,12 @@ export class DetalleComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
   public cargando: boolean;
 
-  constructor(private store: Store<AppState>,
+  constructor(private store: Store<fromIngresoEgreso.AppState>,
               private ingresoEgresoService: IngresoEgresoService) { }
 
   ngOnInit() {
-    this.subscription = this.store.select('ingresoEgreso').subscribe((ingresoEgreso) => this.items = ingresoEgreso.items);
+    this.subscription = this.store.select('ingresoEgreso')
+                                  .subscribe((ingresoEgreso) => this.items = ingresoEgreso.items);
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();

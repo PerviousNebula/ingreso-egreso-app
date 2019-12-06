@@ -1,31 +1,29 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-// Guards
-import { AuthGuard } from './auth/auth.guard';
-
 // Components
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { DASHBOARD_ROUTES } from './dashboard/dashboard.routes';
+import { AuthGuard } from './auth/auth.guard';
+
 
 const ROUTES: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     {
         path: '',
-        component: DashboardComponent,
-        children: DASHBOARD_ROUTES,
-        canActivate: [ AuthGuard ]
+        loadChildren: './ingreso-egreso/ingreso-egreso.module#IngresoEgresoModule',
+        canLoad: [ AuthGuard ]
     },
     { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
-    declarations: [],
-    imports: [ RouterModule.forRoot(ROUTES) ],
-    exports: [ RouterModule ],
-    providers: [],
+    imports: [ 
+        RouterModule.forRoot(ROUTES)
+    ],
+    exports: [ 
+        RouterModule
+    ]
 })
 export class AppRoutingModule {}
